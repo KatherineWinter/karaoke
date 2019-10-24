@@ -19,7 +19,6 @@ header {
 
 #filedrag {
   display: none;
-  font-weight: bold;
   text-align: center;
   padding: 2em;
   margin: 1em 0;
@@ -27,7 +26,6 @@ header {
   border-radius: 7px;
   cursor: default;
   background-color: #ecf0f1;
-  font-size: 2em;
 }
 
 #filedrag.hover{
@@ -46,7 +44,7 @@ header {
 }
 
 #options {
-  padding: 2em;
+  padding: 10px;
   display:none;
 }
 
