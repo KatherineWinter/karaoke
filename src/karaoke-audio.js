@@ -144,6 +144,7 @@ export function playAudioData(data, options = {}) {
     }
   
     try {
+      context.resume()
       if (source) disconnect()
       source = context.createBufferSource();
   
