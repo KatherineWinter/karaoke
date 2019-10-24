@@ -8,12 +8,52 @@ import {
 (function () {
   'use strict';
 
+  let audioBuffer = null
+
   function init() {
     const filedrag = document.getElementById('filedrag'),
-        fileselect = document.getElementById('fileselect'),
-        disableFilter = document.getElementById('disable-filter'),
-        options = document.getElementById('options'),
-        demoAudio = document.getElementById('demo-audio');
+      fileselect = document.getElementById('fileselect'),
+      disableFilter = document.getElementById('disable-filter'),
+      playToggleEl = document.getElementById('playing-toggle'),
+      startTimeEl = document.getElementById('start-time'),
+      durationEl = document.getElementById('duration'),
+      demoAudio = document.getElementById('demo-audio')
+
+    const playAudio = () => {
+      if (!playToggleEl.checked) {
+        setAudioState(AudioState.Running, false)
+        return
+      }
+
+      playAudioData(audioBuffer, {
+        start: startTimeEl.value,
+        duration: durationEl.value
+      })
+    }
+
+    // file selection
+    const fileSelectHandler = (e) => {
+      // cancel event and hover styling
+      fileDragHover(e)
+
+      const droppedFiles = e.target.files || e.dataTransfer.files
+      const reader = new FileReader()
+
+      reader.onload = (fileEvent) => {
+        audioBuffer = fileEvent.target.result
+        if (playToggleEl.checked) {
+          playAudioData(audioBuffer)
+        }
+
+        showData(fileEvent.target.result)
+      }
+
+      reader.readAsArrayBuffer(droppedFiles[0])
+    }
+
+    playToggleEl.addEventListener('change', playAudio)
+    startTimeEl.addEventListener('change', playAudio)
+    durationEl.addEventListener('change', playAudio)
 
     // file select
     fileselect.addEventListener('change', fileSelectHandler, false);
@@ -45,26 +85,8 @@ import {
     e.target.className = (e.type === 'dragover' ? 'hover' : '');
   }
 
-  // file selection
-  function fileSelectHandler(e) {
-    // cancel event and hover styling
-    fileDragHover(e);
-
-    const droppedFiles = e.target.files || e.dataTransfer.files;
-
-    const reader = new FileReader();
-
-    reader.onload = function(fileEvent) {
-      playAudioData(fileEvent.target.result)
-      showData(this.result);
-    };
-
-    // http://ericbidelman.tumblr.com/post/8343485440/reading-mp3-id3-tags-in-javascript
-    // https://github.com/jDataView/jDataView/blob/master/src/jDataView.js
-
-    reader.readAsArrayBuffer(droppedFiles[0]);
-  }
-
+  // http://ericbidelman.tumblr.com/post/8343485440/reading-mp3-id3-tags-in-javascript
+  // https://github.com/jDataView/jDataView/blob/master/src/jDataView.js
   function showData(file) {
     var currentSong = document.getElementById('current-song');
     var dv = new jDataView(file);
