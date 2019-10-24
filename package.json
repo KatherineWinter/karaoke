@@ -1,0 +1,9 @@
+{
+  "name": "karaoke-audio",
+  "version": "1.0.0",
+  "description": "Katherine Winter's iteration on jmperezperez \"karaoke\" repo",
+  "main": "karaoke-audio.js",
+  "repository": "git@github.com:KatherineWinter/karaoke.git",
+  "author": "Katherine Winter <katherine.m.winter@gmail.com>",
+  "license": "MIT"
+}
