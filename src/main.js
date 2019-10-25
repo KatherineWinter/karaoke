@@ -3,7 +3,7 @@ import {
   playAudioUrl,
   AudioState,
   setAudioState
-} from '../karaoke-audio.js/index.js'
+} from '../karaoke-audio.js'
 
 (function () {
   'use strict';
