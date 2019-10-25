@@ -2,7 +2,8 @@ import {
   playAudioData,
   playAudioUrl,
   AudioState,
-  setAudioState
+  setAudioState,
+  currentTime
 } from '../karaoke-audio.js'
 
 (function () {
@@ -17,7 +18,8 @@ import {
       playToggleEl = document.getElementById('playing-toggle'),
       startTimeEl = document.getElementById('start-time'),
       durationEl = document.getElementById('duration'),
-      demoAudio = document.getElementById('demo-audio')
+      demoAudio = document.getElementById('demo-audio'),
+      audioStateEl = document.getElementById('audio-state')
 
     const playAudio = () => {
       if (!playToggleEl.checked) {
@@ -28,6 +30,11 @@ import {
       playAudioData(audioBuffer, {
         start: startTimeEl.value,
         duration: durationEl.value
+      }).then(() => {
+        audioStateEl.textContent = `
+        Status: play
+        time: ${currentTime()}
+        `
       })
     }
 
