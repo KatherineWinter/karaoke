@@ -124,10 +124,11 @@ export function playAudioUrl(url, options = {}) {
 
     request.open('GET', url, true);
     request.responseType = 'arraybuffer';
-  
+
     request.onload = () =>
       playAudioData(request.response, options)
-  
+        .then(resolve)
+
     request.send();
   })
 }
@@ -152,16 +153,15 @@ export function playAudioData(data, options = {}) {
         context.decodeAudioData(copyData, (buffer) => {
           source.buffer = buffer
           createAudio(options)
+          resolve()
         }, e => {
           throw new Error(e)
         });
       } else {
         source.buffer = context.createBuffer(copyData, false);
         createAudio(options);
+        resolve()
       }
-
-      setTimeout(resolve, 2000)
-      resolve()
     } catch (e) {
       throw new Error(e)
     }
