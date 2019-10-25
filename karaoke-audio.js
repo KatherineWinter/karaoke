@@ -3,8 +3,8 @@ let source;
 let processor,
   filterLowPass,
   filterHighPass,
-  mix,
-  mix2;
+  karaokeGainNode,
+  normalGainNode;
 let startTime = null
 
 function copy(src) {
@@ -29,11 +29,11 @@ function createAudio(options = {}) {
   filterHighPass.frequency.value = 120;
 
   // create the gain node
-  mix = context.createGain();
+  karaokeGainNode = context.createGain();
 
-  mix2 = context.createGain();
-  source.connect(mix2);
-  mix2.connect(context.destination);
+  normalGainNode = context.createGain();
+  source.connect(normalGainNode);
+  normalGainNode.connect(context.destination);
 
   // create the processor
   processor = context.createScriptProcessor(
@@ -44,9 +44,9 @@ function createAudio(options = {}) {
 
   // connect everything
   filterHighPass.connect(processor);
-  filterLowPass.connect(mix);
-  processor.connect(mix);
-  mix.connect(context.destination);
+  filterLowPass.connect(karaokeGainNode);
+  processor.connect(karaokeGainNode);
+  karaokeGainNode.connect(context.destination);
 
   // connect with the karaoke filter
   processor.onaudioprocess = karaoke
@@ -62,8 +62,8 @@ function disconnect() {
   source.stop(0);
   source.disconnect(0);
   processor.disconnect(0);
-  mix.disconnect(0);
-  mix2.disconnect(0);
+  karaokeGainNode.disconnect(0);
+  normalGainNode.disconnect(0);
   filterHighPass.disconnect(0);
   filterLowPass.disconnect(0);
 }
@@ -108,8 +108,8 @@ export function setAudioState(option, enabled) {
       break
 
     case AudioState.KaraokeMode:
-      mix.gain.value = enabled ? 1 : 0;
-      mix2.gain.value = enabled ? 0 : 1;
+      karaokeGainNode.gain.value = enabled ? 1 : 0;
+      normalGainNode.gain.value = enabled ? 0 : 1;
       break
 
     default:
