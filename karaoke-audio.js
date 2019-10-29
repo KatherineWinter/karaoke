@@ -14,26 +14,27 @@ function copy(src) {
   return dst;
 }
 
+function createFilter (passType, src, ctx) {
+  let pass = ctx.createBiquadFilter()
+  src.connect(pass)
+  pass.type = passType;
+  pass.frequency.value = 120;
+  return pass
+}
+
+function createGain (ctx) {
+  let gainNode = ctx.createGain()
+  gainNode.connect(ctx.destination);
+  return gainNode
+}
+
 function createAudio(options = {}) {
-  // create low-pass filter
-  filterLowPass = context.createBiquadFilter();
-  source.connect(filterLowPass);
-
-  filterLowPass.type = 'lowpass';
-  filterLowPass.frequency.value = 120;
-
-  // create high-pass filter
-  filterHighPass = context.createBiquadFilter();
-  source.connect(filterHighPass);
-  filterHighPass.type = 'highpass';
-  filterHighPass.frequency.value = 120;
+  filterLowPass = createFilter('lowpass', source, context)
+  filterHighPass = createFilter('highpass', source, context)
 
   // create the gain node
-  karaokeGainNode = context.createGain();
-
-  normalGainNode = context.createGain();
-  source.connect(normalGainNode);
-  normalGainNode.connect(context.destination);
+  karaokeGainNode = createGain(context);
+  normalGainNode = createGain(context);
 
   // create the processor
   processor = context.createScriptProcessor(
@@ -43,10 +44,10 @@ function createAudio(options = {}) {
   )
 
   // connect everything
+  source.connect(normalGainNode);
   filterHighPass.connect(processor);
   filterLowPass.connect(karaokeGainNode);
   processor.connect(karaokeGainNode);
-  karaokeGainNode.connect(context.destination);
 
   // connect with the karaoke filter
   processor.onaudioprocess = karaoke
