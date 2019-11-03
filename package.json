@@ -5,5 +5,8 @@
   "main": "karaoke-audio.js",
   "repository": "git@github.com:KatherineWinter/karaoke.git",
   "author": "Katherine Winter <katherine.m.winter@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "start": "http-server"
+  }
 }
