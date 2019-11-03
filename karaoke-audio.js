@@ -144,24 +144,28 @@ export function playAudioData(data, options = {}) {
     if (!copyData || !copyData.byteLength) {
       throw new Error('data is invalid')
     }
-  
+
     try {
       context.resume()
       if (source) disconnect()
       source = context.createBufferSource();
-  
+
       if (context.decodeAudioData) {
         context.decodeAudioData(copyData, (buffer) => {
           source.buffer = buffer
           createAudio(options)
-          resolve()
+          resolve({
+            decodedBuffer: source.buffer
+          })
         }, e => {
           throw new Error(e)
         });
       } else {
-        source.buffer = context.createBuffer(copyData, false);
-        createAudio(options);
-        resolve()
+        source.buffer = context.createBuffer(copyData, false)
+        createAudio(options)
+        resolve({
+          decodedBuffer: source.buffer
+        })
       }
     } catch (e) {
       throw new Error(e)
