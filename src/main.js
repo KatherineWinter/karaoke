@@ -6,6 +6,11 @@ import {
   currentTime
 } from '../karaoke-audio.js'
 
+import {
+  //displayAudioBufferLevel,
+  displayAudioBufferLevel2
+} from '../audio-rendering.js'
+
 (function () {
   'use strict';
 
@@ -30,11 +35,21 @@ import {
       playAudioData(audioBuffer, {
         start: startTimeEl.value,
         duration: durationEl.value
-      }).then(() => {
+      }).then((result) => {
         audioStateEl.textContent = `
         Status: play
         time: ${currentTime()}
         `
+        const options = {
+          decodedAudioBuffer: result.decodedBuffer,
+          canvasElId: 'visualizer1',
+          startSecond: parseFloat(startTimeEl.value),
+          endSecond: result.decodedBuffer.duration,
+          fillColor: '#000'
+        }
+        //displayAudioBufferLevel(options)
+        options.canvasElId = 'visualizer2'
+        displayAudioBufferLevel2(options)
       })
     }
 
