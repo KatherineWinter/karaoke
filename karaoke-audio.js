@@ -54,8 +54,6 @@ function createAudio(options = {}) {
 
   startTime = new Date()
   source.start(0, options.start || 0, options.duration);
-
-  setTimeout(disconnect, source.buffer.duration * 1000 + 1000);
 }
 
 function disconnect() {
@@ -109,8 +107,8 @@ export function setAudioState(option, enabled) {
       break
 
     case AudioState.KaraokeMode:
-      karaokeGainNode.gain.value = enabled ? 1 : 0;
-      normalGainNode.gain.value = enabled ? 0 : 1;
+      if (karaokeGainNode) karaokeGainNode.gain.value = enabled ? 1 : 0;
+      if (normalGainNode) normalGainNode.gain.value = enabled ? 0 : 1;
       break
 
     default:
