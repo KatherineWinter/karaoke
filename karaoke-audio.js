@@ -137,10 +137,11 @@ export function songLength() {
 }
 
 export function playAudioData(data, options = {}) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const copyData = copy(data)
     if (!copyData || !copyData.byteLength) {
-      throw new Error('data is invalid')
+      reject('data is invalid')
+      return
     }
 
     try {
@@ -156,7 +157,8 @@ export function playAudioData(data, options = {}) {
             decodedBuffer: source.buffer
           })
         }, e => {
-          throw new Error(e)
+          reject(e)
+          return
         });
       } else {
         source.buffer = context.createBuffer(copyData, false)
@@ -166,7 +168,8 @@ export function playAudioData(data, options = {}) {
         })
       }
     } catch (e) {
-      throw new Error(e)
+      reject(e)
+      return
     }
   })
 }
