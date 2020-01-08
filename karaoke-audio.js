@@ -6,6 +6,7 @@ let processor,
   karaokeGainNode,
   normalGainNode;
 let startTime = null
+let hasStarted = false
 
 function copy(src) {
   if (!src) return null
@@ -29,6 +30,14 @@ function createGain (ctx) {
 }
 
 function createAudio(options = {}) {
+  if (options.start < 0) {
+    return `Invalid start value: ${options.start}`
+  }
+
+  if (options.duration && options.duration < 0) {
+    return `Invalid duration value: ${options.duration}`
+  }
+
   filterLowPass = createFilter('lowpass', source, context)
   filterHighPass = createFilter('highpass', source, context)
 
@@ -54,9 +63,11 @@ function createAudio(options = {}) {
 
   startTime = new Date()
   source.start(0, options.start || 0, options.duration);
+  hasStarted = true
 }
 
 function disconnect() {
+  if (!hasStarted) return
   setAudioState(AudioState.KaraokeMode, false)
   source.stop(0);
   source.disconnect(0);
@@ -65,6 +76,7 @@ function disconnect() {
   normalGainNode.disconnect(0);
   filterHighPass.disconnect(0);
   filterLowPass.disconnect(0);
+  hasStarted = false
 }
 
 // based on https://gist.github.com/kevincennis/3928503
@@ -152,7 +164,12 @@ export function playAudioData(data, options = {}) {
       if (context.decodeAudioData) {
         context.decodeAudioData(copyData, (buffer) => {
           source.buffer = buffer
-          createAudio(options)
+          const error = createAudio(options)
+          if (error) {
+            reject(error)
+            return
+          }
+
           resolve({
             decodedBuffer: source.buffer
           })
@@ -162,7 +179,12 @@ export function playAudioData(data, options = {}) {
         });
       } else {
         source.buffer = context.createBuffer(copyData, false)
-        createAudio(options)
+        const error = createAudio(options)
+        if (error) {
+          reject(error)
+          return
+        }
+
         resolve({
           decodedBuffer: source.buffer
         })
