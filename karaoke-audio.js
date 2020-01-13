@@ -6,7 +6,6 @@ let processor,
   karaokeGainNode,
   normalGainNode;
 let startTime = null
-let hasStarted = false
 
 function copy(src) {
   if (!src) return null
@@ -63,11 +62,11 @@ function createAudio(options = {}) {
 
   startTime = new Date()
   source.start(0, options.start || 0, options.duration);
-  hasStarted = true
 }
 
 function disconnect() {
-  if (!hasStarted) return
+  if (!startTime) return
+  startTime = null
   setAudioState(AudioState.KaraokeMode, false)
   source.stop(0);
   source.disconnect(0);
