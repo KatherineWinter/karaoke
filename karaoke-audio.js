@@ -75,7 +75,6 @@ function disconnect() {
   normalGainNode.disconnect(0);
   filterHighPass.disconnect(0);
   filterLowPass.disconnect(0);
-  hasStarted = false
 }
 
 // based on https://gist.github.com/kevincennis/3928503
