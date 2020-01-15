@@ -70,6 +70,7 @@ function disconnect() {
   setAudioState(AudioState.KaraokeMode, false)
   source.stop(0);
   source.disconnect(0);
+  source.buffer = null;
   processor.disconnect(0);
   karaokeGainNode.disconnect(0);
   normalGainNode.disconnect(0);
