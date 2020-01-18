@@ -6,10 +6,10 @@ import {
   currentTime
 } from '../karaoke-audio.js'
 
-import {
-  //displayAudioBufferLevel,
-  displayAudioBufferLevel2
-} from '../audio-rendering.js'
+// import {
+//   //displayAudioBufferLevel,
+//   displayAudioBufferLevel2
+// } from '../audio-rendering.js'
 
 (function () {
   'use strict';
@@ -34,7 +34,7 @@ import {
 
       playAudioData(audioBuffer, {
         start: startTimeEl.value,
-        duration: durationEl.value
+        duration: durationEl.value > 0 ? durationEl.value : undefined 
       }).then((result) => {
         audioStateEl.textContent = `
         Status: play
@@ -49,7 +49,7 @@ import {
         }
         //displayAudioBufferLevel(options)
         options.canvasElId = 'visualizer2'
-        displayAudioBufferLevel2(options)
+        //displayAudioBufferLevel2(options)
       })
     }
 

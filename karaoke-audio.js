@@ -3,6 +3,8 @@ let source;
 let processor,
   filterLowPass,
   filterHighPass,
+  filterBandPassHi,
+  filterBandPassLo,
   karaokeGainNode,
   normalGainNode;
 let startTime = null
@@ -14,11 +16,11 @@ function copy(src) {
   return dst;
 }
 
-function createFilter (passType, src, ctx) {
+function createFilter (passType, src, ctx, freq) {
   let pass = ctx.createBiquadFilter()
   src.connect(pass)
   pass.type = passType;
-  pass.frequency.value = 120;
+  pass.frequency.value = freq;
   return pass
 }
 
@@ -37,24 +39,29 @@ function createAudio(options = {}) {
     return `Invalid duration value: ${options.duration}`
   }
 
-  filterLowPass = createFilter('lowpass', source, context)
-  filterHighPass = createFilter('highpass', source, context)
+  const karaokeLimitLow = 160;
+  const karaokeLimitHigh = 9000;
+  filterLowPass = createFilter('lowpass', source, context, karaokeLimitLow)
+  filterBandPassHi = createFilter('highpass', source, context, karaokeLimitLow)
+  filterBandPassLo = createFilter('lowpass', filterBandPassHi, context, karaokeLimitHigh);
+  filterHighPass = createFilter('highpass', source, context, karaokeLimitHigh);
 
   // create the gain node
   karaokeGainNode = createGain(context);
   normalGainNode = createGain(context);
-
+  
   // create the processor
   processor = context.createScriptProcessor(
     2048 /*bufferSize*/,
     2 /*num inputs*/,
     1 /*num outputs*/
-  )
+  );
 
   // connect everything
   source.connect(normalGainNode);
-  filterHighPass.connect(processor);
+  filterBandPassLo.connect(processor);
   filterLowPass.connect(karaokeGainNode);
+  filterHighPass.connect(karaokeGainNode);
   processor.connect(karaokeGainNode);
 
   // connect with the karaoke filter
@@ -76,6 +83,8 @@ function disconnect() {
   normalGainNode.disconnect(0);
   filterHighPass.disconnect(0);
   filterLowPass.disconnect(0);
+  filterBandPassHi.disconnect(0);
+  filterBandPassLo.disconnect(0);
 }
 
 // based on https://gist.github.com/kevincennis/3928503
