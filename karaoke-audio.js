@@ -40,7 +40,7 @@ function createAudio(options = {}) {
   }
 
   const karaokeLimitLow = 160;
-  const karaokeLimitHigh = 9000;
+  const karaokeLimitHigh = 4000;
   filterLowPass = createFilter('lowpass', source, context, karaokeLimitLow)
   filterBandPassHi = createFilter('highpass', source, context, karaokeLimitLow)
   filterBandPassLo = createFilter('lowpass', filterBandPassHi, context, karaokeLimitHigh);
